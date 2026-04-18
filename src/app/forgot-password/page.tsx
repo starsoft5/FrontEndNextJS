@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     try {
       await authApi.forgotPassword(trimmed);
-      setSuccess(true);
+      setSuccess(true); 
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } }; message?: string };
       if (e.response) {
