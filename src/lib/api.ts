@@ -61,6 +61,8 @@ export const authApi = {
     api.post<AuthResponse>("/auth/refresh", { token, refreshToken }),
   logout: () => api.post("/auth/logout"),
   forgotPassword: (email: string) => api.post("/auth/forgot-password", { email }),
+  resetPassword: (data: { email: string; token: string; newPassword: string }) =>
+    api.post("/auth/reset-password", data),
   getOidcConfig: () => api.get("/auth/.well-known/openid-configuration"),
 };
 
