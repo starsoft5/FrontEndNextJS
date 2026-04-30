@@ -219,7 +219,8 @@ export default function PaymentOrdersPage() {
       const updated = { ...item, [field]: value };
       if (field === "orderItemId") {
         const oi = allOrderItems.find((o) => o.id === value);
-        updated.quantity = oi ? oi.quantity : 0;
+        updated.quantity = 1;
+        updated.amountPaid = oi ? oi.totalPrice : 0;
       }
       return updated;
     });
@@ -232,7 +233,7 @@ export default function PaymentOrdersPage() {
     setFieldErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  const grandTotal = form.paymentOrderItems.reduce((sum, item) => sum + item.amountPaid, 0);
+  const grandTotal = form.paymentOrderItems.reduce((sum, item) => sum + item.amountPaid * item.quantity, 0);
 
   const allItemsFullyPaid = checkAllPaid(form.paymentOrderItems);
 
@@ -385,9 +386,12 @@ export default function PaymentOrdersPage() {
               <button
                 type="button"
                 onClick={addPaymentItem}
-                className="text-sm text-primary hover:underline font-medium"
+                className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors"
               >
-                + Add Item
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                </svg>
+                Add Item
               </button>
             </div>
             {fieldErrors.paymentOrderItems && (
@@ -395,7 +399,6 @@ export default function PaymentOrdersPage() {
             )}
             <div className="space-y-2">
               {form.paymentOrderItems.map((item, index) => {
-                const selectedOrderItem = allOrderItems.find((oi) => oi.id === item.orderItemId);
                 return (
                   <div
                     key={index}
@@ -420,11 +423,6 @@ export default function PaymentOrdersPage() {
                       {fieldErrors[`paymentOrderItems_${index}_orderItemId`] && (
                         <p className="mt-1 text-xs text-danger">
                           {fieldErrors[`paymentOrderItems_${index}_orderItemId`]}
-                        </p>
-                      )}
-                      {selectedOrderItem && (
-                        <p className="mt-1 text-xs text-muted">
-                          Unit Price: ${selectedOrderItem.unitPrice.toFixed(2)} | Total: ${selectedOrderItem.totalPrice.toFixed(2)}
                         </p>
                       )}
                     </div>
@@ -465,23 +463,26 @@ export default function PaymentOrdersPage() {
                         </p>
                       )}
                     </div>
+                    <div className="w-full sm:w-32">
+                      <label className="block text-xs text-muted mb-1">Line Total</label>
+                      <input
+                        type="text"
+                        readOnly
+                        value={`$${(item.amountPaid * item.quantity).toFixed(2)}`}
+                        className="w-full px-2 py-1 text-sm border border-border rounded-lg bg-gray-50 text-muted"
+                      />
+                    </div>
                     <div className="flex items-end gap-1">
-                      {item.orderItemId > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => setHistoryOrderItemId(item.orderItemId)}
-                          className="px-2 py-1 text-sm text-primary hover:bg-blue-50 rounded-lg whitespace-nowrap"
-                        >
-                          Payment History
-                        </button>
-                      )}
                       {form.paymentOrderItems.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removePaymentItem(index)}
-                          className="px-2 py-1 text-sm text-danger hover:bg-red-50 rounded-lg"
+                          className="p-1 text-danger hover:bg-red-50 rounded-lg"
+                          title="Remove"
                         >
-                          Remove
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
                         </button>
                       )}
                     </div>
