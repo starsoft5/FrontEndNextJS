@@ -252,4 +252,76 @@ export const orderApi = {
     api.delete<Order>(`/orders/${orderId}/items/${itemId}`),
 };
 
+// --- Payment Orders ---
+export interface PaymentOrderItemDto {
+  id: number;
+  orderItemId: number;
+  orderId: number;
+  orderNumber: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  orderItemTotalPrice: number;
+  amountPaid: number;
+}
+
+export interface PaymentOrder {
+  id: number;
+  customerId: number;
+  customerName: string;
+  paymentOrderNumber: string;
+  paymentDate: string;
+  status: string;
+  totalAmount: number;
+  notes?: string;
+  createdAt: string;
+  paymentOrderItems: PaymentOrderItemDto[];
+}
+
+export interface CreatePaymentOrderItemData {
+  orderItemId: number;
+  quantity: number;
+  amountPaid: number;
+}
+
+export interface CreatePaymentOrderData {
+  customerId: number;
+  paymentDate: string;
+  notes?: string;
+  paymentOrderItems: CreatePaymentOrderItemData[];
+}
+
+export interface UpdatePaymentOrderData {
+  customerId?: number;
+  paymentDate?: string;
+  status?: string;
+  notes?: string;
+}
+
+export interface AddPaymentOrderItemData {
+  orderItemId: number;
+  quantity: number;
+  amountPaid: number;
+}
+
+export interface UpdatePaymentOrderItemData {
+  quantity: number;
+  amountPaid: number;
+}
+
+export const paymentOrderApi = {
+  getAll: () => api.get<PaymentOrder[]>("/paymentorders"),
+  getById: (id: number) => api.get<PaymentOrder>(`/paymentorders/${id}`),
+  getByCustomer: (customerId: number) => api.get<PaymentOrder[]>(`/paymentorders/customer/${customerId}`),
+  create: (data: CreatePaymentOrderData) => api.post<PaymentOrder>("/paymentorders", data),
+  update: (id: number, data: UpdatePaymentOrderData) => api.put<PaymentOrder>(`/paymentorders/${id}`, data),
+  delete: (id: number) => api.delete(`/paymentorders/${id}`),
+  addItem: (paymentOrderId: number, data: AddPaymentOrderItemData) =>
+    api.post<PaymentOrder>(`/paymentorders/${paymentOrderId}/items`, data),
+  updateItem: (paymentOrderId: number, itemId: number, data: UpdatePaymentOrderItemData) =>
+    api.put<PaymentOrder>(`/paymentorders/${paymentOrderId}/items/${itemId}`, data),
+  removeItem: (paymentOrderId: number, itemId: number) =>
+    api.delete<PaymentOrder>(`/paymentorders/${paymentOrderId}/items/${itemId}`),
+};
+
 export default api;

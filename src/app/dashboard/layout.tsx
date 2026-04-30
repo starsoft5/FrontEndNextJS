@@ -27,10 +27,10 @@ export default function DashboardLayout({
         if (parsed.role === "Admin") {
           setStatus("authorized");
         } else if (parsed.role === "User") {
-          if (pathname.startsWith("/dashboard/orders")) {
+          if (pathname.startsWith("/dashboard/payment-orders") || pathname.startsWith("/dashboard/payment-orders")) {
             setStatus("authorized");
           } else {
-            router.replace("/dashboard/orders");
+            router.replace("/dashboard/payment-orders");
           }
         } else {
           setStatus("unauthorized");

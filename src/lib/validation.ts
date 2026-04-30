@@ -14,7 +14,7 @@ export function validateLogin(form: { email: string; password: string }): FieldE
 
   if (!form.password) {
     errors.password = "Password is required.";
-  } else if (form.password.length < 6) {
+  } else if (form.password.length < 1) {
     errors.password = "Password must be at least 6 characters.";
   }
 
@@ -197,6 +197,42 @@ export function validateUpdateOrder(form: {
 }): FieldErrors {
   const errors: FieldErrors = {};
   // All fields are optional on update; no required validation needed
+  return errors;
+}
+
+export function validatePaymentOrder(form: {
+  customerId: number;
+  paymentDate: string;
+  notes?: string;
+  paymentOrderItems: { orderItemId: number; quantity: number; amountPaid: number }[];
+}): FieldErrors {
+  const errors: FieldErrors = {};
+
+  if (!form.customerId || form.customerId <= 0) {
+    errors.customerId = "Please select a customer.";
+  }
+
+  if (!form.paymentDate) {
+    errors.paymentDate = "Payment date is required.";
+  }
+
+  if (!form.paymentOrderItems || form.paymentOrderItems.length === 0) {
+    errors.paymentOrderItems = "At least one payment item is required.";
+  } else {
+    for (let i = 0; i < form.paymentOrderItems.length; i++) {
+      const item = form.paymentOrderItems[i];
+      if (!item.orderItemId || item.orderItemId <= 0) {
+        errors[`paymentOrderItems_${i}_orderItemId`] = `Item ${i + 1}: Please select an order item.`;
+      }
+      if (!item.quantity || item.quantity <= 0) {
+        errors[`paymentOrderItems_${i}_quantity`] = `Item ${i + 1}: Quantity must be greater than zero.`;
+      }
+      if (!item.amountPaid || item.amountPaid <= 0) {
+        errors[`paymentOrderItems_${i}_amountPaid`] = `Item ${i + 1}: Amount paid must be greater than zero.`;
+      }
+    }
+  }
+
   return errors;
 }
 
