@@ -416,7 +416,7 @@ export default function PaymentOrdersPage() {
                         <option value={0}>Select order item...</option>
                         {allOrderItems.map((oi) => (
                           <option key={oi.id} value={oi.id}>
-                            ID:{oi.id} | {oi.orderNumber} | {oi.productName} x{oi.quantity} - ${oi.totalPrice.toFixed(2)}
+                            {oi.productName} x{oi.quantity} - ${oi.totalPrice.toFixed(2)}
                           </option>
                         ))}
                       </select>
